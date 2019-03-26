@@ -1,0 +1,41 @@
+---
+# tasks file for apache
+
+- name: Install Apache
+  yum:
+    name: httpd
+    state: present
+
+- name: Start and enable httpd
+  service:
+    name: httpd
+    state: started
+    enabled: yes
+
+- name: Copy index.html
+  copy:
+    src: index.html
+    dest: /var/www/html/
+  notify: restart_httpd
+
+- name: Copy logo jpg
+  copy:
+    src: vmware_ansible.jpg
+    dest: /var/www/html/
+  notify: restart_httpd
+
+- name: Add firewall rule for 80/443
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: yes
+  with_items:
+    - http
+    - https
+  notify:
+    - restart_fw
+  register: fw_result
+
+- name: Log result
+  debug:
+    var: fw_result
