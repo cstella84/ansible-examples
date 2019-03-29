@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: localhost
   tasks:
     - debug:
         msg: 'Whoa I worked!'
